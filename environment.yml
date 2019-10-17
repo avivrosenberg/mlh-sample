@@ -1,0 +1,28 @@
+name: mlh-challenge
+channels:
+  - pytorch
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.7
+  - pytorch=1.3
+  - torchvision
+  - jupyterlab
+  - numpy
+  - scikit-learn
+  - matplotlib
+  - ipython
+  - jupyter
+  - pandas
+  - cython
+  - pytest
+  - tqdm
+  - python-dotenv>=0.5.1
+  - future
+  - skorch
+  - openpyxl
+  - xlrd
+  - pip
+  - pip:
+    - nbmerge
+    - wfdb
