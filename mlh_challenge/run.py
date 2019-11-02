@@ -1,5 +1,8 @@
+import os
 import logging
+from pathlib import Path
 
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.metrics import roc_auc_score
@@ -39,7 +42,7 @@ def training(data_file, save_model, **kw):
         model.save_state(filepath=save_model)
 
 
-def inference(data_file, load_model, **kw):
+def inference(data_file, out_file, load_model, **kw):
     # Load and process data
     raw_data = data.load_raw(data_file)
     X_test, y_test, _ = data.build_features(raw_data)
@@ -55,6 +58,9 @@ def inference(data_file, load_model, **kw):
     # Score
     logger.info(f"Test scores: {calc_scores(y_test, y_pred, y_proba)}")
 
+    if out_file:
+        write_output(out_file, y_pred, y_proba)
+
 
 def calc_scores(y, y_pred, y_proba):
     return dict(
@@ -63,3 +69,24 @@ def calc_scores(y, y_pred, y_proba):
         f1=f1_score(y, y_pred),
         roc_auc=roc_auc_score(y, y_proba)
     )
+
+
+def write_output(out_file, y_pred, y_proba, **writer_kw):
+    df = pd.DataFrame(data=dict(y_pred=y_pred, y_proba=y_proba))
+
+    out_path = Path(out_file)
+    os.makedirs(out_path.parent, exist_ok=True)
+
+    fmt = out_path.suffix
+
+    if fmt in ('.csv', '.tsv'):
+        writer_kw.setdefault('sep', '\t' if fmt == '.tsv' else ',')
+        df.to_csv(out_path, **writer_kw)
+
+    elif fmt in ('.xls', '.xlsx'):
+        df.to_excel(out_path, **writer_kw)
+
+    else:
+        raise ValueError("Unknown output file format")
+
+    logger.info(f"Wrote output file {out_file}")
