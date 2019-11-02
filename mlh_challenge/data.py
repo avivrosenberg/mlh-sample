@@ -22,6 +22,7 @@ def build_features(raw_data):
 
     Xb, Xb_names = raw_data['phys_feat'], raw_data['phys_feat_names']
     Xp, Xp_names = raw_data['pol_feat'], raw_data['pol_feat_names']
+    y = raw_data['labels']
 
     # As a demo, here we'll just use all basic and pollution features as
     # they are, without any processing.
@@ -31,10 +32,15 @@ def build_features(raw_data):
                      for i in range(Xp.shape[1]) for j in range(Xp.shape[2])]
     feat_names = np.hstack((Xb_names, Xp_names_flat))
 
-    # Handle missing samples: naively replace them with -1 (not a good idea...)
-    imputer = SimpleImputer(missing_values=np.nan, strategy='constant',
-                            fill_value=-1.)
-    X = imputer.fit_transform(X,)
+    # Example: Remove missing features (all-nan columns)
+    missing_features = np.where(np.all(np.isnan(X), axis=0))
+    X = np.delete(X, missing_features, axis=1)
+    feat_names = np.delete(feat_names, missing_features, axis=0)
+
+    # Example: handle missing samples by naively replacing them with feature
+    # median
+    imputer = SimpleImputer(missing_values=np.nan, strategy='median')
+    X = imputer.fit_transform(X, )
 
     logger.info(f'Processed data shape: {X.shape}')
-    return X, feat_names
+    return X, y, feat_names
