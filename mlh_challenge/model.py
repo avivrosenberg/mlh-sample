@@ -55,7 +55,7 @@ class MLHChallengeModel(BaseEstimator, ClassifierMixin):
     def predict(self, X, **kwargs):
         # TODO: Implement your inference code here. Return binary labels.
         y_pred = self.lr_model.predict(X)
-        return y_pred
+        return y_pred.astype(np.int)
 
     def fit_predict(self, X, y, **kwargs):
         return self.fit(X, y, **kwargs).predict(X, **kwargs)
