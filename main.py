@@ -43,7 +43,7 @@ def parse_cli():
                              formatter_class=help_formatter)
     sp_train.set_defaults(handler=mlh_challenge.run.training)
     sp_train.add_argument('--data-file', required=False,
-                          default=DATA_DIR.joinpath('mlh_train.npz'),
+                          default=DATA_DIR.joinpath('mlh-train.npz'),
                           type=is_file, help='Input data file')
     sp_train.add_argument('--save-model', required=False,
                           default=MODELS_DIR.joinpath('model.pkl'),
@@ -55,7 +55,7 @@ def parse_cli():
                              formatter_class=help_formatter)
     sp_infer.set_defaults(handler=mlh_challenge.run.inference)
     sp_infer.add_argument('--data-file', required=False,
-                          default=DATA_DIR.joinpath('mlh_test.npz'),
+                          default=DATA_DIR.joinpath('mlh-test.npz'),
                           type=is_file, help='Input data file')
     sp_infer.add_argument('--load-model', required=True, type=is_file,
                           help='Path to model file to load')
