@@ -49,6 +49,16 @@ class MLHChallengeFeatureTransformer(BaseEstimator, TransformerMixin):
         pass
 
     def fit(self, Xb, Xp, y=None, Xb_names=None, Xp_names=None, **kw):
+        """
+        Fit's the transformer's parameters to training data.
+        :param Xb: Physiological features
+        :param Xp: Pollution features
+        :param y: Targets
+        :param Xb_names: Physiological feature names
+        :param Xp_names: Pollution feature names
+        :param kw: extra args
+        :return: self
+        """
         assert Xb.shape[0] == Xp.shape[0]
         n_samples, _ = Xb.shape
 
@@ -80,6 +90,15 @@ class MLHChallengeFeatureTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, Xb, Xp, Xb_names=None, Xp_names=None, **kw):
+        """
+        Apply the fitted transformation to data.
+        :param Xb: Physiological features
+        :param Xp: Pollution features
+        :param Xb_names: Physiological feature names
+        :param Xp_names: Pollution feature names
+        :param kw: extra args
+        :return: self
+        """
         logger.info(f'Generating features...')
 
         n_samples, _ = Xb.shape
