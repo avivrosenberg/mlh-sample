@@ -42,6 +42,7 @@ bronchiolitis cases that are admitted at the Rambam.
 |---- data.py       # Data loading and processing, building features
 |---- model.py      # Model implementation
 |---- run.py        # Training and inference runners
+|---- utils.py      # Reading and writing files, scoring
 |- data/            # Folder for storing dataset files for training
 |- models/          # Folder for saving trained models
 |- out/             # Folder for output files
@@ -160,6 +161,7 @@ structure:
     |---- data.py
     |---- model.py
     |---- run.py
+    |---- utils.py
     |---- foo.py           # You can add more code files as needed
     |---- bar.py           # You can add more code files as needed
     |- models/
@@ -168,10 +170,11 @@ structure:
 
 ## Evaluation
 
-1. We will evaluate your submission by running the inference code as shown
-above, but on our hidden test set and using your final submitted pre-trained
-model.
-2. We will then use the output file `out/results.csv` to compute the ROC-AUC
+1. We will evaluate your submission by running inference using the
+CLI as shown in the example above.
+2. Evaluation will be performed on our hidden test set and using your
+final submitted pre-trained model.
+3. We will then use the output file `out/results.csv` to compute the ROC-AUC
 score.
-3. The submissions will be ranked by this score.
+4. The submissions will be ranked by this score.
 
