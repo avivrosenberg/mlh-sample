@@ -96,10 +96,11 @@ Notes:
 
 This starter project implements the following training steps:
 1. Loading raw data in the format provided by the challenge organizers
-2. Processing the data to create features
+2. Processing the data and transforming the features
 3. Fitting an example model to the data
-4. Saving the fitted model to a file so it can be loaded later
-5. Computing the evaluation scores
+4. Saving the fitted model and feature transform to a file so it can be used
+for inference
+5. Computing evaluation scores
 
 To perform these steps run e.g.,
 ```shell script
@@ -124,8 +125,8 @@ module instead of running from the command line.
 This starter project implements the following steps for inference using an
  **existing pre-trained model**:
 1. Loading raw data in the format provided by the challenge organizers
-2. Processing the data to create features
-3. Loading a pre-trained model from a file
+2. Loading a pre-trained model and feature transformation from a file
+3. Processing the data to create features using the loaded transformation
 4. Using the loaded model to predict labels of the loaded data
 5. Computing the evaluation scores
 6. Saving the prediction results to a file
