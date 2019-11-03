@@ -34,6 +34,14 @@ class MLHChallengeModel(BaseEstimator, ClassifierMixin):
         )
 
     def fit(self, X, y, **kwargs):
+        """
+        Fits the model parameters to the data.
+        :param X: 2d tensor of data samples (N,D)
+        :param y: 1d tensor of binary targets labels (N,)
+        :param kwargs: any extra args that you need.
+        :return: self.
+        """
+
         # TODO:
         #  Implement your training code here.
 
@@ -48,11 +56,25 @@ class MLHChallengeModel(BaseEstimator, ClassifierMixin):
         return self
 
     def predict_proba(self, X, **kwargs):
+        """
+        Calculates a probability estimate for a positive prediction (1).
+        :param X: 2d tensor of data samples (N,D)
+        :param kwargs: any extra args that you need.
+        :return: 1d tensor of probabilities (N,)
+        """
+
         # TODO: Implement probability calculation for positive class (1).
         y_proba = self.lr_model.predict_proba(X)
         return y_proba[:, 1]  # probability of class 1
 
     def predict(self, X, **kwargs):
+        """
+        Predicts the class label for the given samples.
+        :param X: 2d tensor of data samples (N,D)
+        :param kwargs: any extra args that you need.
+        :return: 1d tensor of binary class labels (N,)
+        """
+
         # TODO: Implement your inference code here. Return binary labels.
         y_pred = self.lr_model.predict(X)
         return y_pred.astype(np.int)

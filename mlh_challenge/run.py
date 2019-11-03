@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 def training(data_file, save_model, **kw):
+    """
+    Runs training of the challenge Model on a given dataset and write the
+    trained model to a file.
+    :param data_file: Path to data file in the challenge format.
+    :param save_model: Path to output model file. Empty or None will skip
+        saving.
+    :param kw: Extra args.
+    """
+
     # Load and process data
     raw_data = data.load_raw(data_file)
     X, y, feat_names = data.build_features(raw_data)
@@ -43,6 +52,14 @@ def training(data_file, save_model, **kw):
 
 
 def inference(data_file, out_file, load_model, **kw):
+    """
+    Runs inference using a given dataset and a pre-trained model.
+    :param data_file: Path to data file in the challenge format.
+    :param out_file: Path to output file where the inference results will be
+        saved. Can be a .csv/.tsv./.xlsx/.xls file.
+    :param load_model: Path to pre-trained model file to load.
+    :param kw: Extra args.
+    """
     # Load and process data
     raw_data = data.load_raw(data_file)
     X_test, y_test, _ = data.build_features(raw_data)
