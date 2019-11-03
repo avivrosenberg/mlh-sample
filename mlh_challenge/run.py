@@ -1,13 +1,16 @@
+import math
 import os
 import logging
+import pickle
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.metrics import roc_auc_score
 
 import mlh_challenge.data as data
+from mlh_challenge.data import MLHChallengeFeatureTransformer
 from mlh_challenge.model import MLHChallengeModel
 
 logger = logging.getLogger(__name__)
@@ -24,31 +27,45 @@ def training(data_file, save_model, **kw):
     """
 
     # Load and process data
-    raw_data = data.load_raw(data_file)
-    X, y, feat_names = data.build_features(raw_data)
+    Xb, Xp, y, Xb_names, Xp_names = data.load_raw(data_file)
+    n_samples, _ = Xb.shape
 
-    # TODO:
-    #  Split into train and validation sets.
-    X_t, X_v, y_t, y_v = train_test_split(X, y, test_size=0.1, shuffle=True)
+    # Example: Split into train and validation sets.
+    # TODO: Modify to fit your needs.
+    test_ratio = .2
+    idx = np.random.permutation(np.arange(n_samples))
+    train_idx = idx[0:math.floor(n_samples * (1 - test_ratio))]
+    valid_idx = idx[math.floor(n_samples * (1 - test_ratio)):]
+
+    ft = MLHChallengeFeatureTransformer()
+
+    y_train = y[train_idx]
+    X_train, X_names = ft.fit_transform(
+        Xb[train_idx], Xp[train_idx],
+        y=y[train_idx], Xb_names=Xb_names, Xp_names=Xp_names
+    )
+
+    y_valid = y[valid_idx]
+    X_valid, _ = ft.transform(Xb[valid_idx], Xp[valid_idx])
 
     # TODO:
     #  Initialize your model.
     model = MLHChallengeModel(foo=3, bar=4, **kw)
 
     logger.info('Training...')
-    y_pred_t = model.fit_predict(X_t, y_t, feat_names=feat_names)
-    y_proba_t = model.predict_proba(X_t)
+    y_pred_t = model.fit_predict(X_train, y_train, feat_names=X_names)
+    y_proba_t = model.predict_proba(X_train)
 
-    y_pred_v = model.predict(X_v)
-    y_proba_v = model.predict_proba(X_v)
+    y_pred_v = model.predict(X_valid)
+    y_proba_v = model.predict_proba(X_valid)
 
     # Score
-    logger.info(f"Train scores: {calc_scores(y_t, y_pred_t, y_proba_t)}")
-    logger.info(f"Validation scores: {calc_scores(y_v, y_pred_v, y_proba_v)}")
+    logger.info(f"Train: {calc_scores(y_train, y_pred_t, y_proba_t)}")
+    logger.info(f"Validation: {calc_scores(y_valid, y_pred_v, y_proba_v)}")
 
     if save_model:
-        logger.info(f"Saving model to {save_model}...")
-        model.save_state(filepath=save_model)
+        save_state(save_model,
+                   dict(ft=ft.save_state(), model=model.save_state()))
 
 
 def inference(data_file, out_file, load_model, **kw):
@@ -60,13 +77,19 @@ def inference(data_file, out_file, load_model, **kw):
     :param load_model: Path to pre-trained model file to load.
     :param kw: Extra args.
     """
-    # Load and process data
-    raw_data = data.load_raw(data_file)
-    X_test, y_test, _ = data.build_features(raw_data)
+    # Load trained model and feature transformer
+    state_dict = load_state(load_model)
 
-    # Load trained model
+    ft = MLHChallengeFeatureTransformer()
+    ft.load_state(state_dict['ft'])
+
     model = MLHChallengeModel()
-    model.load_state(filepath=load_model)
+    model.load_state(state_dict['model'])
+
+    # Load and process data
+    Xb, Xp, y_test, Xb_names, Xp_names = data.load_raw(data_file)
+    n_samples, _ = Xb.shape
+    X_test, X_names = ft.transform(Xb, Xp, Xb_names, Xp_names)
 
     # Run inference
     y_proba = model.predict_proba(X_test)
@@ -86,6 +109,25 @@ def calc_scores(y, y_pred, y_proba):
         f1=f1_score(y, y_pred),
         roc_auc=roc_auc_score(y, y_proba)
     )
+
+
+def save_state(filepath, state_dict):
+    filepath = Path(filepath)  # in case it's a str
+    os.makedirs(filepath.parent, exist_ok=True)
+    if filepath.suffix.lower() != '.pkl':
+        filepath = Path(f'{filepath}.pkl')
+
+    logger.info(f"Saving model to {filepath}...")
+    with open(filepath, mode='wb') as f:
+        pickle.dump(state_dict, f)
+
+
+def load_state(filepath):
+    logger.info(f"Loading model from {filepath}...")
+    with open(filepath, mode='rb') as f:
+        state_dict = pickle.load(f)
+
+    return state_dict
 
 
 def write_output(out_file, y_pred, y_proba, **writer_kw):
