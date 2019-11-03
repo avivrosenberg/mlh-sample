@@ -88,7 +88,8 @@ Notes:
 - If you use PyCharm or any other IDE, you should configure the interpreter path
   of the IDE to the path of the `python` executable within the conda
   env folder. For example, point the interpreter path to
-  `~/miniconda3/envs/mlh-challenge/bin/python`.
+  `~/miniconda3/envs/mlh-challenge/bin/python` if that's where your env is
+  installed.
   
 ### Training
 
@@ -152,7 +153,8 @@ rename the final trained model file to `models/final-model.pkl`.
 are the IDs of the submitters.
 3. The structure inside the zip file should be the same as the project
 structure:
-    ```shell script
+    ```shell
+    +
     |- mlh.py
     |- mlh_challenge/
     |---- data.py
