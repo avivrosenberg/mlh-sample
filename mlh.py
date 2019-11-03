@@ -34,6 +34,7 @@ def parse_cli():
                           default=DATA_DIR.joinpath('mlh-train.npz'),
                           type=is_file, help='Input data file')
     sp_train.add_argument('--save-model', required=False,
+                          dest='save_model_file',
                           default=MODELS_DIR.joinpath('model.pkl'),
                           help='Name path to model file to save.'
                                'If None or empty, model will not be saved.')
@@ -51,6 +52,7 @@ def parse_cli():
                                          'classification results. Can be '
                                          'a .csv/tsv/xls/xlsx file.')
     sp_infer.add_argument('--load-model', required=True, type=is_file,
+                          dest='load_model_file',
                           help='Path to model file to load')
 
     parsed = p.parse_args()
