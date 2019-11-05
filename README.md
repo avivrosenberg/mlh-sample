@@ -24,7 +24,7 @@ The Winter 2019 Challenge in partnership with the Rambam Children's hospital
 addresses the following research question: 
 
     For children admitted with bronchiolitis at the Rambam, predict whether the
-    length of stay will be prolonged (superior to 2.5 days) by a prior exposure to
+    length of stay will be prolonged (superior to 4.5 days) by a prior exposure to
     an increased air pollution level. 
 
 In the context of this research, “length of stay” is used as a proxy for the
